@@ -2,7 +2,7 @@ extraResources:
   [
     "./extraResources/**"
   ]
-appId: com.flybywiresim.installer
+appId: org.flybywiresim.installer
 linux:
   target:
     - target: flatpak
@@ -20,7 +20,7 @@ linux:
       Type: Application
       Categories: "Utility;"
       StartupWMClass: FlyByWire Installer
-      Icon: com.flybywiresim.installer
+      Icon: org.flybywiresim.installer
   files: [
     "out/**/*"
   ]

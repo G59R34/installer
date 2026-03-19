@@ -43,7 +43,7 @@
     "extraResources": [
       "./extraResources/**"
     ],
-    "appId": "com.flybywiresim.installer",
+    "appId": "org.flybywiresim.installer",
     "nsis": {
       "include": "scripts/installer.nsh",
       "artifactName": "FlyByWire-Installer-${version}-${arch}.${ext}"
