@@ -9,7 +9,7 @@
 
 
 releases:
-  - name: 3.6.1
+  - name: 3.7.0
     changes:
       - title: Add Linux versions
         categories: [Core]
