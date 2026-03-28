@@ -41,9 +41,14 @@ jobs:
         run: |
           npm run package:all
           mkdir -p upload/github/
-          mkdir -p upload/cdn/
+          cp ./dist/latest.yml ./upload/github/
           cp ./dist/latest-linux.yml ./upload/github/
-          cp ./dist/latest-linux.yml ./upload/cdn/
+          cp ./dist/$PACKAGE_NAME-*-*.* ./upload/github/ || true
+          mkdir -p upload/cdn/
+          # Copy and modify latest.yml to use static filenames
+          sed -E 's/${{ env.PACKAGE_NAME }}-[0-9]+\.[0-9]+\.[0-9]+(-[^-]+)?-/${{ env.PACKAGE_NAME }}-/g' ./dist/latest.yml > ./upload/cdn/latest.yml
+          # Copy and modify latest-linux.yml to use static filenames
+          sed -E 's/${{ env.PACKAGE_NAME }}-[0-9]+\.[0-9]+\.[0-9]+(-[^-]+)?-/${{ env.PACKAGE_NAME }}-/g' ./dist/latest-linux.yml > ./upload/cdn/latest-linux.yml
           for file in ./dist/$PACKAGE_NAME-*-*.*; do
             [ -e "$file" ] || continue
             # Extract extension
@@ -56,7 +61,6 @@ jobs:
             arch=$(basename "$file" | sed -E 's/.*-([^-]+)\.'"$ext"'$/\1/')
             # Compose new filename
             staticname="$PACKAGE_NAME-$arch.$ext"
-            cp "$file" "./upload/github/"
             cp "$file" "./upload/cdn/$staticname"
           done
 
