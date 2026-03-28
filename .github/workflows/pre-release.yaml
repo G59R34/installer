@@ -41,18 +41,18 @@ jobs:
           mkdir -p upload/github/
           cp ./dist/latest.yml ./upload/github/
           cp ./dist/latest-linux.yml ./upload/github/
-          cp ./dist/$PACKAGE_NAME-*-*.* ./upload/github/ || true
+          cp ./dist/${{ env.PACKAGE_NAME }}-*-*.* ./upload/github/ || true
           mkdir -p upload/cdn/
           # Copy and modify latest.yml to use static filenames
-          sed -E "s/${PACKAGE_NAME}-[0-9]+\.[0-9]+\.[0-9]+(-[^-]+)?-/${PACKAGE_NAME}-/g" ./dist/latest.yml > ./upload/cdn/latest.yml
+          sed -E "s/${{ env.PACKAGE_NAME }}-[0-9]+\.[0-9]+\.[0-9]+(-[^-]+)?-/${{ env.PACKAGE_NAME }}-/g" ./dist/latest.yml > ./upload/cdn/latest.yml
           # Copy and modify latest-linux.yml to use static filenames
-          sed -E "s/${PACKAGE_NAME}-[0-9]+\.[0-9]+\.[0-9]+(-[^-]+)?-/${PACKAGE_NAME}-/g" ./dist/latest-linux.yml > ./upload/cdn/latest-linux.yml
-          for file in ./dist/$PACKAGE_NAME-*-*.*; do
+          sed -E "s/${{ env.PACKAGE_NAME }}-[0-9]+\.[0-9]+\.[0-9]+(-[^-]+)?-/${{ env.PACKAGE_NAME }}-/g" ./dist/latest-linux.yml > ./upload/cdn/latest-linux.yml
+          for file in ./dist/${{ env.PACKAGE_NAME }}-*-*.*; do
             [ -e "$file" ] || continue
             filename=$(basename "$file")
             
             # Remove version from filename to create static filename
-            staticname=$(echo "$filename" | sed -E "s/${PACKAGE_NAME}-[0-9]+\.[0-9]+\.[0-9]+(-[^-]+)?-/${PACKAGE_NAME}-/")
+            staticname=$(echo "$filename" | sed -E "s/${{ env.PACKAGE_NAME }}-[0-9]+\.[0-9]+\.[0-9]+(-[^-]+)?-/${{ env.PACKAGE_NAME }}-/")
             
             cp "$file" "./upload/cdn/$staticname"
           done

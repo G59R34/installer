@@ -42,15 +42,15 @@ jobs:
           npm run package:all
           mkdir -p upload/
           # Copy and modify latest.yml to use static filenames
-          sed -E "s/${PACKAGE_NAME}-[0-9]+\.[0-9]+\.[0-9]+(-[^-]+)?-/${PACKAGE_NAME}-/g" ./dist/latest.yml > ./upload/latest.yml
+          sed -E "s/${{ env.PACKAGE_NAME }}-[0-9]+\.[0-9]+\.[0-9]+(-[^-]+)?-/${{ env.PACKAGE_NAME }}-/g" ./dist/latest.yml > ./upload/latest.yml
           # Copy and modify latest-linux.yml to use static filenames
-          sed -E "s/${PACKAGE_NAME}-[0-9]+\.[0-9]+\.[0-9]+(-[^-]+)?-/${PACKAGE_NAME}-/g" ./dist/latest-linux.yml > ./upload/latest-linux.yml
-          for file in ./dist/$PACKAGE_NAME-*-*.*; do
+          sed -E "s/${{ env.PACKAGE_NAME }}-[0-9]+\.[0-9]+\.[0-9]+(-[^-]+)?-/${{ env.PACKAGE_NAME }}-/g" ./dist/latest-linux.yml > ./upload/latest-linux.yml
+          for file in ./dist/${{ env.PACKAGE_NAME }}-*-*.*; do
             [ -e "$file" ] || continue
             filename=$(basename "$file")
             
             # Remove version from filename to create static filename
-            staticname=$(echo "$filename" | sed -E "s/${PACKAGE_NAME}-[0-9]+\.[0-9]+\.[0-9]+(-[^-]+)?-/${PACKAGE_NAME}-/")
+            staticname=$(echo "$filename" | sed -E "s/${{ env.PACKAGE_NAME }}-[0-9]+\.[0-9]+\.[0-9]+(-[^-]+)?-/${{ env.PACKAGE_NAME }}-/")
             
             cp "$file" "./upload/$staticname"
           done
