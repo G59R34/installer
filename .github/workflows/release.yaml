@@ -46,24 +46,18 @@ jobs:
           cp ./dist/$PACKAGE_NAME-*-*.* ./upload/github/ || true
           mkdir -p upload/cdn/
           # Copy and modify latest.yml to use static filenames
-          sed -E 's/${{ env.PACKAGE_NAME }}-[0-9]+\.[0-9]+\.[0-9]+(-[^-]+)?-/${{ env.PACKAGE_NAME }}-/g' ./dist/latest.yml > ./upload/cdn/latest.yml
+          sed -E "s/${PACKAGE_NAME}-[0-9]+\.[0-9]+\.[0-9]+(-[^-]+)?-/${PACKAGE_NAME}-/g" ./dist/latest.yml > ./upload/cdn/latest.yml
           # Copy and modify latest-linux.yml to use static filenames
-          sed -E 's/${{ env.PACKAGE_NAME }}-[0-9]+\.[0-9]+\.[0-9]+(-[^-]+)?-/${{ env.PACKAGE_NAME }}-/g' ./dist/latest-linux.yml > ./upload/cdn/latest-linux.yml
+          sed -E "s/${PACKAGE_NAME}-[0-9]+\.[0-9]+\.[0-9]+(-[^-]+)?-/${PACKAGE_NAME}-/g" ./dist/latest-linux.yml > ./upload/cdn/latest-linux.yml
           for file in ./dist/$PACKAGE_NAME-*-*.*; do
             [ -e "$file" ] || continue
-            # Extract extension
-            ext="${file##*.}"
-            # Skip .blockmap files
-            if [ "$ext" = "blockmap" ]; then
-              continue
-            fi
-            # Extract arch (the part after the last '-' and before the extension)
-            arch=$(basename "$file" | sed -E 's/.*-([^-]+)\.'"$ext"'$/\1/')
-            # Compose new filename
-            staticname="$PACKAGE_NAME-$arch.$ext"
+            filename=$(basename "$file")
+            
+            # Remove version from filename to create static filename
+            staticname=$(echo "$filename" | sed -E "s/${PACKAGE_NAME}-[0-9]+\.[0-9]+\.[0-9]+(-[^-]+)?-/${PACKAGE_NAME}-/")
+            
             cp "$file" "./upload/cdn/$staticname"
           done
-
       - name: Configure rclone for Cloudflare R2
         run: |
             mkdir -p ~/.config/rclone
