@@ -21,6 +21,10 @@ export class Directories {
     return path.join(app.getPath('appData'), '..', 'Local');
   }
 
+  static home(): string {
+    return app.getPath('home');
+  }
+
   static osTemp(): string {
     return app.getPath('temp');
   }
