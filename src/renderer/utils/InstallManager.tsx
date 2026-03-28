@@ -12,6 +12,7 @@ import {
 } from 'renderer/redux/features/downloads';
 import { Directories } from 'renderer/utils/Directories';
 import fs from 'fs';
+import os from 'os';
 import { ApplicationStatus, InstallStatus, InstallStatusCategories } from 'renderer/components/AddonSection/Enums';
 import {
   FragmenterContextEvents,
@@ -499,7 +500,7 @@ export class InstallManager {
           `mainSettings.disableBackgroundServiceAutoStartPrompt.${publisher.key}.${addon.key}`,
         );
 
-        if (!isAutoStartEnabled && !doNotAskAgain) {
+        if (!isAutoStartEnabled && !doNotAskAgain && os.platform() !== 'linux') {
           await showModal(<AutostartDialog app={app} addon={addon} publisher={publisher} isPrompted={true} />);
         }
       }
