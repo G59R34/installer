@@ -6,14 +6,22 @@ import { Directories } from 'renderer/utils/Directories';
 import { dialog } from '@electron/remote';
 import { managedSim, TypeOfSimulator } from 'renderer/utils/SimManager';
 
-const possibleBasePaths: Record<TypeOfSimulator, { store: string; steam: string }> = {
+const possibleBasePaths: Record<TypeOfSimulator, { store: string; steam: string; linuxSteam: string }> = {
   msfs2020: {
     store: path.join(Directories.localAppData(), '\\Packages\\Microsoft.FlightSimulator_8wekyb3d8bbwe\\LocalCache\\'),
     steam: path.join(Directories.appData(), '\\Microsoft Flight Simulator\\'),
+    linuxSteam: path.join(
+      Directories.home(),
+      '.local/share/Steam/steamapps/compatdata/1250410/pfx/drive_c/users/steamuser/AppData/Roaming/Microsoft Flight Simulator',
+    ),
   },
   msfs2024: {
     store: path.join(Directories.localAppData(), '\\Packages\\Microsoft.Limitless_8wekyb3d8bbwe\\LocalCache\\'),
     steam: path.join(Directories.appData(), '\\Microsoft Flight Simulator 2024\\'),
+    linuxSteam: path.join(
+      Directories.home(),
+      '.local/share/Steam/steamapps/compatdata/2537590/pfx/drive_c/users/steamuser/AppData/Roaming/Microsoft Flight Simulator 2024',
+    ),
   },
 };
 
@@ -25,7 +33,11 @@ export const msfsBasePath = (sim: TypeOfSimulator): string | null => {
   }
 
   if (os.platform().toString() === 'linux') {
-    return (basePathCache[sim] = null);
+    if (fs.existsSync(possibleBasePaths[sim].linuxSteam)) {
+      return (basePathCache[sim] = possibleBasePaths[sim].linuxSteam);
+    } else {
+      return (basePathCache[sim] = null);
+    }
   }
 
   // Ensure proper functionality in main- and renderer-process
@@ -68,7 +80,27 @@ export const defaultCommunityDir = (msfsBase: string | null): string | null => {
     const msfsConfigLines = msfsConfig.split(/\r?\n/);
     // Intentional space after InstalledPackagesPath to ensure not matching the InstalledPackagesPathNextBoot property added in MSFS2024 SU2.
     const packagesPathLine = msfsConfigLines.find((line) => line.includes('InstalledPackagesPath '));
-    const communityDir = path.join(packagesPathLine.split(' ').slice(1).join(' ').replaceAll('"', ''), '\\Community');
+    let communityDir = path.join(packagesPathLine.split(' ').slice(1).join(' ').replaceAll('"', ''), '\\Community');
+
+    if (os.platform().toString() === 'linux') {
+      if (msfsBase === possibleBasePaths.msfs2020.linuxSteam) {
+        communityDir = communityDir
+          .replaceAll('\\', '/')
+          .replace(
+            'C:/',
+            path.join(Directories.home(), '.local/share/Steam/steamapps/compatdata/1250410/pfx/drive_c/'),
+          );
+      } else if (msfsBase === possibleBasePaths.msfs2024.linuxSteam) {
+        communityDir = communityDir
+          .replaceAll('\\', '/')
+          .replace(
+            'C:/',
+            path.join(Directories.home(), '.local/share/Steam/steamapps/compatdata/2537590/pfx/drive_c/'),
+          );
+      } else {
+        return (communityDirCache[msfsBase] = null);
+      }
+    }
 
     return (communityDirCache[msfsBase] = fs.existsSync(communityDir) ? communityDir : null);
   } catch (e) {

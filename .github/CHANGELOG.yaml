@@ -9,10 +9,15 @@
 
 
 releases:
-  - name: 3.6.1
+  - name: 3.7.1
     changes:
       - title: Fetch addon versions asynchronously
         categories: [Logic]
+        authors: [FoxtrotSierra]
+  - name: 3.7.0
+    changes:
+      - title: Add Linux compatibility
+        categories: [Core]
         authors: [FoxtrotSierra]
   - name: 3.6.0
     changes:
