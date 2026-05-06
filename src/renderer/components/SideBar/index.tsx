@@ -13,7 +13,7 @@ export const SideBar: FC<SideBarProps> = ({ className, children }) => {
 
   return (
     <div
-      className={`flex flex-col gap-y-5 ${textClass} ${darkTheme ? 'bg-navy-dark' : 'bg-quasi-white'} h-full px-6 py-7 ${className}`}
+      className={`flex flex-col gap-y-5 ${textClass} ${darkTheme ? 'border-r border-white/5 bg-gradient-to-b from-navy-dark to-navy-dark/95 shadow-[12px_0_40px_rgba(0,0,0,0.25)]' : 'bg-quasi-white'} h-full px-6 py-7 ${className}`}
       style={{ width: '28rem' }}
     >
       {children}
@@ -49,7 +49,7 @@ export const SideBarItem: FC<SideBarItemProps> = ({
 
   return (
     <div
-      className={`relative flex w-full items-center justify-between rounded-lg border-2 p-5 transition duration-200 ${defaultBorderStyle} ${dependantStyles} ${!enabled && 'opacity-50'} ${enabled ? 'cursor-pointer' : 'cursor-not-allowed'} no-underline ${className}`}
+      className={`relative flex w-full items-center justify-between overflow-hidden rounded-xl border-2 p-5 shadow-sm transition-all duration-300 ease-out-expo ${defaultBorderStyle} ${dependantStyles} ${!enabled && 'opacity-50'} ${enabled ? 'cursor-pointer hover:-translate-y-0.5 hover:shadow-lg active:translate-y-0' : 'cursor-not-allowed'} no-underline ${className}`}
       onClick={enabled ? onClick : undefined}
     >
       {children}

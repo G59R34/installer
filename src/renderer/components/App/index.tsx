@@ -97,9 +97,13 @@ const App = () => {
       <ModalContainer />
 
       <SimpleBar>
-        <div className="flex h-screen w-full flex-col">
-          <div className="flex h-full flex-col overflow-hidden">
-            <div className="draggable absolute z-50 flex h-12 w-full flex-row items-center bg-black pl-4">
+        <div className="relative flex h-screen w-full flex-col overflow-hidden">
+          <div
+            className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_100%_70%_at_50%_-10%,rgba(0,224,254,0.09),transparent_50%),radial-gradient(ellipse_80%_50%_at_100%_50%,rgba(82,128,234,0.06),transparent_45%),linear-gradient(180deg,rgba(14,19,27,0.5)_0%,transparent_40%)]"
+            aria-hidden
+          />
+          <div className="relative flex h-full flex-col overflow-hidden">
+            <div className="draggable absolute z-50 flex h-12 w-full flex-row items-center border-b border-white/5 bg-gradient-to-r from-navy-dark via-black to-navy-dark pl-4 shadow-[0_8px_32px_rgba(0,0,0,0.45)] backdrop-blur-md">
               <div className="flex h-full flex-1 flex-row items-stretch overflow-hidden">
                 <Logo />
 
@@ -121,8 +125,8 @@ const App = () => {
               </div>
             </div>
 
-            <div className="flex h-full flex-row justify-start pt-10">
-              <div className="z-40 h-full">
+            <div className="relative flex h-full flex-row justify-start pt-12">
+              <div className="z-40 h-full motion-safe:animate-fade-in">
                 <NavBar>
                   {configuration.publishers
                     .filter((publisher) => publisher.addons.some((addon) => addon.simulator === managedSim))
@@ -136,7 +140,7 @@ const App = () => {
                 </NavBar>
               </div>
 
-              <div className="m-0 flex w-full bg-navy">
+              <div className="m-0 flex w-full min-w-0 bg-navy/95 motion-safe:animate-fade-in motion-safe:[animation-delay:60ms] motion-safe:[animation-fill-mode:backwards]">
                 <Switch>
                   <Route exact path="/">
                     <Redirect to={`/addon-section/${configuration.publishers[0].name}`} />

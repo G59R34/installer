@@ -64,10 +64,44 @@ module.exports = {
                 },
             },
             boxShadow: {
-                'inner-sm': 'inset 0 1px 2px 0 rgba(0, 0, 0, 0.05)'
+                'inner-sm': 'inset 0 1px 2px 0 rgba(0, 0, 0, 0.05)',
+                'glow-cyan': '0 0 28px -6px rgba(0, 224, 254, 0.35)',
+                'panel-deep': '0 28px 56px -16px rgba(0, 0, 0, 0.55)',
+                'nav-active': '0 4px 14px -4px rgba(0, 224, 254, 0.25)',
+            },
+            transitionTimingFunction: {
+                'out-expo': 'cubic-bezier(0.16, 1, 0.3, 1)',
+                'in-out-soft': 'cubic-bezier(0.45, 0, 0.55, 1)',
+            },
+            keyframes: {
+                'fade-in': {
+                    '0%': { opacity: '0' },
+                    '100%': { opacity: '1' },
+                },
+                'fade-in-up': {
+                    '0%': { opacity: '0', transform: 'translateY(14px)' },
+                    '100%': { opacity: '1', transform: 'translateY(0)' },
+                },
+                'panel-in': {
+                    '0%': { opacity: '0', transform: 'scale(0.94) translateY(12px)' },
+                    '100%': { opacity: '1', transform: 'scale(1) translateY(0)' },
+                },
+                'hero-in': {
+                    '0%': { opacity: '0.85', transform: 'scale(1.03)' },
+                    '100%': { opacity: '1', transform: 'scale(1)' },
+                },
+                'attention-pulse': {
+                    '0%, 100%': { boxShadow: '0 0 0 0 rgba(234, 179, 8, 0.45)' },
+                    '50%': { boxShadow: '0 0 20px 4px rgba(234, 179, 8, 0.25)' },
+                },
             },
             animation: {
                 'spin-reverse': 'spin 1s linear infinite reverse',
+                'fade-in': 'fade-in 0.45s ease-out forwards',
+                'fade-in-up': 'fade-in-up 0.55s cubic-bezier(0.16, 1, 0.3, 1) forwards',
+                'panel-in': 'panel-in 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards',
+                'hero-in': 'hero-in 0.85s cubic-bezier(0.16, 1, 0.3, 1) forwards',
+                'attention-pulse': 'attention-pulse 2.4s ease-in-out infinite',
             },
             fontFamily: {
                 inter: ['Inter', 'sans-serif'],
@@ -76,6 +110,19 @@ module.exports = {
             },
             borderRadius: {
                 'sm-md': '4px',
+            },
+            /** Explicit px scale — readable on large desktops; not tied to html rem root */
+            fontSize: {
+                'fbw-xs': ['11px', { lineHeight: '1.45' }],
+                'fbw-sm': ['12px', { lineHeight: '1.5' }],
+                'fbw-base': ['14px', { lineHeight: '1.55' }],
+                'fbw-md': ['15px', { lineHeight: '1.55' }],
+                'fbw-lg': ['18px', { lineHeight: '1.35' }],
+                'fbw-xl': ['22px', { lineHeight: '1.3' }],
+            },
+            maxWidth: {
+                /** Main configure column — scales with large windows (was 900px). */
+                configure: '1680px',
             },
         },
     },

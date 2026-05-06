@@ -24,8 +24,8 @@ export const DebugSection = (): JSX.Element => {
   };
 
   return (
-    <div className="py-8 pl-12">
-      <h1 className="font-manrope font-bold text-white">Debug options</h1>
+    <div className="py-8 pl-12 motion-safe:animate-fade-in-up">
+      <h1 className="font-manrope font-bold tracking-tight text-white">Debug options</h1>
 
       <h3 className="text-white">Notifications</h3>
       <button className="bg-cyan p-3 font-bold" onClick={sendNotification}>

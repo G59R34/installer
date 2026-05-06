@@ -36,20 +36,22 @@
 }
 
 .modal {
-    @apply p-8 w-5/12 max-w-screen-sm text-quasi-white rounded-xl;
+    /* Fill modal shell (outer wrapper sets max width); avoid w-5/12 which made dialogs ~42% wide and broke layouts */
+    @apply p-6 sm:p-8 w-full max-w-none min-w-0 text-quasi-white rounded-2xl shadow-panel-deep;
 
     background-color: var(--color-brand-navy-dark);
 
-    @apply border-2;
-    border-color: var(--color-brand-navy-main);
+    @apply border border-white/10 ring-1 ring-cyan/15;
+    border-color: rgba(31, 42, 61, 0.95);
 
     .modal-title {
-        @apply text-5xl text-quasi-white font-manrope font-bold;
+        @apply text-5xl text-quasi-white font-manrope font-bold tracking-tight;
     }
 }
 
 .button {
-    @apply text-3xl text-quasi-white font-inter font-bold px-5 border-2 rounded-md transition-colors duration-150;
+    @apply text-3xl text-quasi-white font-inter font-bold px-5 border-2 rounded-lg transition-all duration-150 ease-out;
+    @apply shadow-md hover:shadow-lg active:scale-[0.98] active:shadow-inner-sm;
 
     height: 2.35em;
 

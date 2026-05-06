@@ -60,7 +60,7 @@ export const defaultConfiguration: Configuration = {
           titleImageUrlSelected: 'https://flybywirecdn.com/installer/media-assets/addon-titles/fbw-a32nx/light.svg',
           enabled: true,
           backgroundImageUrls: ['https://flybywirecdn.com/installer/media-assets/addon-headers/fbw-a32nx/1.png'],
-          shortDescription: 'Airbus A320neo Series',
+          shortDescription: 'Airbus A320neo',
           description:
             'The A320neo (new engine option) is one of many upgrades introduced by Airbus to help maintain ' +
             'its A320 product line’s position as the world’s most advanced and fuel-efficient single-aisle ' +
@@ -270,7 +270,7 @@ export const defaultConfiguration: Configuration = {
           titleImageUrlSelected: 'https://flybywirecdn.com/installer/media-assets/addon-titles/fbw-a32nx/light.svg',
           enabled: true,
           backgroundImageUrls: ['https://flybywirecdn.com/installer/media-assets/addon-headers/fbw-a32nx/1.png'],
-          shortDescription: 'Airbus A320neo Series',
+          shortDescription: 'Airbus A320neo',
           description:
             'The A320neo (new engine option) is one of many upgrades introduced by Airbus to help maintain ' +
             'its A320 product line’s position as the world’s most advanced and fuel-efficient single-aisle ' +
@@ -770,7 +770,7 @@ export const defaultConfiguration: Configuration = {
           enabled: true,
           backgroundImageUrls: ['https://flybywirecdn.com/installer/media-assets/addon-headers/fbw-simbridge/0.png'],
           backgroundImageShadow: false,
-          shortDescription: 'Airbus A380-800',
+          shortDescription: '',
           description: `<span style="color: rgb(255, 106, 0);">&#9888; Important: Starting with version 0.6.0, custom resources such as PDF Charts and Company Routes must be stored in the Documents folder (typically located at \`C:\\Users\\<Username>\\Documents\\FlyByWireSim\\Simbridge\\resources)\`. <br> Please ensure you back up your files before updating. After the update, transfer your files to this new location to keep them safe from future updates. You can also use the Resources button in the About section of the installer to locate the folder.</span> \n\nSimBridge is an external app that enables FlyByWire Simulations aircraft to communicate outside your simulator. From remote displays to external terrain display rendering, it is used for a variety of optional features.`,
           targetDirectory: 'flybywire-externaltools-simbridge',
           tracks: [
@@ -826,7 +826,7 @@ export const defaultConfiguration: Configuration = {
           enabled: true,
           backgroundImageUrls: ['https://flybywirecdn.com/installer/media-assets/addon-headers/fbw-simbridge/0.png'],
           backgroundImageShadow: false,
-          shortDescription: 'Airbus A380-800',
+          shortDescription: '',
           description: `<span style="color: rgb(255, 106, 0);">&#9888; Important: Starting with version 0.6.0, custom resources such as PDF Charts and Company Routes must be stored in the Documents folder (typically located at \`C:\\Users\\<Username>\\Documents\\FlyByWireSim\\Simbridge\\resources)\`. <br> Please ensure you back up your files before updating. After the update, transfer your files to this new location to keep them safe from future updates. You can also use the Resources button in the About section of the installer to locate the folder.</span> \n\nSimBridge is an external app that enables FlyByWire Simulations aircraft to communicate outside your simulator. From remote displays to external terrain display rendering, it is used for a variety of optional features.`,
           targetDirectory: 'flybywire-externaltools-simbridge',
           tracks: [

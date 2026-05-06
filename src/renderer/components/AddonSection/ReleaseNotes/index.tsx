@@ -126,24 +126,26 @@ export const ReleaseNotes = ({ addon }: { addon: Addon }): JSX.Element => {
   );
 
   return (
-    <div className="relative w-full">
+    <div className="relative flex min-h-0 min-w-0 flex-1 flex-col">
       {scrollButtonShown && releaseComponent && (
-        <div className="absolute inset-0">
+        <div className="pointer-events-none absolute inset-0">
           <div
-            className="absolute bottom-0 right-0 z-30 m-4 cursor-pointer rounded-md bg-cyan/40 p-4 text-white transition duration-200 hover:bg-cyan/100"
+            className="pointer-events-auto absolute bottom-0 right-0 z-30 m-4 cursor-pointer rounded-md bg-cyan/40 p-4 text-white transition duration-200 hover:bg-cyan/100"
             onClick={handleScrollUp}
           >
             <ArrowUp className="stroke-current" size={20} />
           </div>
         </div>
       )}
-      <div className="relative size-full overflow-y-auto p-7" ref={releaseNotesRef}>
-        <div className="flex flex-row items-center justify-between">
-          <h2 className="font-bold text-white">Release Notes</h2>
+      <div className="relative min-h-0 flex-1 overflow-y-auto py-10 sm:py-12 lg:py-16" ref={releaseNotesRef}>
+        <div className="mx-auto w-full max-w-configure px-6 sm:px-10 lg:px-14">
+          <div className="flex flex-row items-center justify-between">
+            <h2 className="font-manrope text-fbw-xl font-bold text-white 2xl:text-[26px]">Release Notes</h2>
 
-          <h2 className="text-white">Stable Version</h2>
+            <h2 className="font-manrope text-fbw-lg text-white 2xl:text-fbw-xl">Stable Version</h2>
+          </div>
+          <div className="mt-8">{releaseComponent ?? <DummyComponent />}</div>
         </div>
-        {releaseComponent ?? <DummyComponent />}
       </div>
     </div>
   );

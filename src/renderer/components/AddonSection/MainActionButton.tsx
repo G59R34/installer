@@ -7,22 +7,17 @@ import { InstallState } from 'renderer/redux/features/installStatus';
 interface ActiveInstallButtonProps {
   installState: InstallState;
   onInstall: () => void;
-  onCancel: () => void;
 }
 
+/** Primary install/update/cancel actions only. Idle installed states use InstallStatusSummary in the parent. */
 export const MainActionButton: FC<ActiveInstallButtonProps> = ({
   installState: { status: installStatus },
   onInstall,
-  onCancel,
-}): JSX.Element => {
+}): JSX.Element | null => {
   switch (installStatus) {
     case InstallStatus.DownloadDone:
     case InstallStatus.UpToDate:
-      return (
-        <SidebarButton disabled type={ButtonType.Positive}>
-          Installed
-        </SidebarButton>
-      );
+      return null;
     case InstallStatus.NeedsUpdate:
       return (
         <SidebarButton type={ButtonType.Caution} onClick={onInstall}>
@@ -36,11 +31,7 @@ export const MainActionButton: FC<ActiveInstallButtonProps> = ({
         </SidebarButton>
       );
     case InstallStatus.GitInstall:
-      return (
-        <SidebarButton disabled type={ButtonType.Positive} onClick={onInstall}>
-          Installed (git)
-        </SidebarButton>
-      );
+      return null;
     case InstallStatus.TrackSwitch:
       return (
         <SidebarButton type={ButtonType.Caution} onClick={onInstall}>
@@ -50,11 +41,8 @@ export const MainActionButton: FC<ActiveInstallButtonProps> = ({
     case InstallStatus.InstallingDependency:
     case InstallStatus.Downloading:
     case InstallStatus.Decompressing:
-      return (
-        <SidebarButton type={ButtonType.Danger} onClick={onCancel}>
-          Cancel
-        </SidebarButton>
-      );
+      /** Cancel is shown next to the install progress banner for clearer layout. */
+      return null;
     case InstallStatus.DownloadPending:
     case InstallStatus.DownloadPrep:
     case InstallStatus.DownloadEnding:
@@ -79,6 +67,6 @@ export const MainActionButton: FC<ActiveInstallButtonProps> = ({
         </SidebarButton>
       );
     default:
-      return <></>;
+      return null;
   }
 };

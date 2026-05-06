@@ -4,3 +4,32 @@
     text-decoration-thickness: 3px;
     text-underline-offset: 8px;
 }
+
+.configure-markdown-content {
+    font-family: inherit;
+    font-size: clamp(14px, 0.55vw + 12px, 17px);
+    font-weight: 400;
+    line-height: 1.65;
+    color: var(--color-brand-quasi-white);
+}
+
+.configure-markdown-content p + p {
+    margin-top: 0.65em;
+}
+
+.configure-markdown-content ul {
+    margin: 0.55em 0;
+    padding-left: 1.25em;
+    list-style: disc;
+}
+
+.configure-markdown-content li + li {
+    margin-top: 0.35em;
+}
+
+.configure-markdown-content h2,
+.configure-markdown-content h3 {
+    margin-top: 1em;
+    margin-bottom: 0.45em;
+    font-weight: 700;
+}

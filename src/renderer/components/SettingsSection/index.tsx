@@ -49,7 +49,7 @@ export const SettingsSection = (): JSX.Element => {
   };
 
   return (
-    <div className="w-full overflow-hidden bg-navy-lighter text-white">
+    <div className="w-full overflow-hidden bg-gradient-to-br from-navy-lighter via-navy to-navy text-white">
       <div className="flex size-full flex-row items-stretch">
         <SideBar className="shrink-0">
           <div
@@ -92,7 +92,7 @@ export const SettingsSection = (): JSX.Element => {
           </div>
         </SideBar>
 
-        <div className="grow border-l border-gray-700 bg-navy px-12 py-8">
+        <div className="grow border-l border-white/10 bg-navy/90 px-12 py-8 motion-safe:animate-fade-in-up">
           <Route exact path="/settings">
             <Redirect to="/settings/general" />
           </Route>

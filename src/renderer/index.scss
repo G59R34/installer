@@ -46,7 +46,7 @@ code {
   border-radius: 10px;
 }
 ::-webkit-scrollbar-thumb {
-  @apply bg-navy-lightest;
+  @apply rounded-full bg-navy-lightest/90 transition-colors duration-300 hover:bg-cyan/35;
 }
 
 div {
@@ -90,7 +90,8 @@ h6 {
 p {
   @apply mb-4;
 
-  font-size: 15px;
+  font-size: 14px;
+  line-height: 1.6;
 }
 
 a {
@@ -100,6 +101,20 @@ a {
 
 button:focus {
   outline: none;
+}
+
+button:focus-visible,
+a:focus-visible,
+[role='button']:focus-visible,
+[role='tab']:focus-visible,
+[role='option']:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 2px var(--color-brand-navy-dark), 0 0 0 4px var(--color-brand-cyan-main);
+}
+
+button:focus:not(:focus-visible),
+a:focus:not(:focus-visible) {
+  box-shadow: none;
 }
 
 input {

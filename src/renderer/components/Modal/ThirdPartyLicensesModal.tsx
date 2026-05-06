@@ -35,11 +35,14 @@ export const ThirdPartyLicensesModal: React.FC = () => {
   });
 
   return (
-    <div className="flex size-2/3 max-w-screen-sm flex-col rounded-xl border-2 border-navy-light bg-navy p-8 text-quasi-white">
+    <div className="flex size-2/3 max-w-screen-sm flex-col rounded-2xl border border-white/10 bg-navy p-8 text-quasi-white shadow-panel-deep ring-1 ring-cyan/15">
       <div className="flex w-full flex-row items-start justify-between">
-        <h2 className="font-bold leading-none text-quasi-white">{'Third Party Licenses'}</h2>
-        <div className="" onClick={handleClose}>
-          <X className="-m-14.06px text-red-600 hover:text-red-500" size={50} strokeWidth={1} />
+        <h2 className="font-bold leading-none tracking-tight text-quasi-white">{'Third Party Licenses'}</h2>
+        <div
+          className="cursor-pointer transition-transform duration-200 hover:scale-110 active:scale-95"
+          onClick={handleClose}
+        >
+          <X className="-m-14.06px text-red-500 hover:text-red-400" size={50} strokeWidth={1} />
         </div>
       </div>
       <div ref={parentRef} className="mt-4 w-full grow overflow-y-scroll">

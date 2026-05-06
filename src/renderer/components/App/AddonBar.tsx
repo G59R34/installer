@@ -67,7 +67,7 @@ export const AddonBar: FC = ({ children }) => {
       className={`flex flex-col justify-between gap-y-5 ${textClass} ${darkTheme ? 'bg-navy-dark' : 'bg-quasi-white'} h-full px-6 py-7`}
     >
       <div className="flex flex-col -space-y-7">
-        <h3 className={`${textClass} -mb-1 font-bold`}>{publisherData.name}</h3>
+        <h3 className={`${textClass} -mb-1 font-manrope text-fbw-xl font-bold`}>{publisherData.name}</h3>
       </div>
 
       <div className="flex grow flex-col">{children}</div>
@@ -95,12 +95,25 @@ export const AddonBarItem: FC<AddonBarItemProps> = ({ addon, enabled, selected, 
 
   return (
     <div
-      className={`flex w-full flex-col justify-between rounded-lg border-2 p-6 transition duration-200 ${border} ${background} ${!enabled && 'opacity-50'} ${enabled ? 'cursor-pointer' : 'cursor-not-allowed'} ${className}`}
+      className={`flex w-full flex-col justify-between rounded-xl border-2 p-5 shadow-sm transition-[transform,box-shadow,border-color] duration-150 ease-out will-change-transform hover:-translate-y-px hover:shadow-[0_0_18px_-6px_rgba(0,224,254,0.35)] active:translate-y-0 ${border} ${background} ${!enabled && 'opacity-50'} ${enabled ? 'cursor-pointer' : 'cursor-not-allowed'} ${className}`}
       onClick={enabled ? onClick : undefined}
     >
-      <span className="mb-2.5 font-manrope text-2xl font-medium text-current">{addon.aircraftName}</span>
-      <div className="mt-1 flex h-10 flex-row justify-between">
-        <img className="h-10 w-max" src={selected ? addon.titleImageUrl : addon.titleImageUrlSelected} />
+      <div className="mb-2">
+        <span className="block font-manrope text-[24px] font-semibold leading-tight tracking-tight text-current">
+          {addon.aircraftName}
+        </span>
+        {addon.shortDescription ? (
+          <span className="text-current/80 mt-1.5 block font-manrope text-fbw-sm leading-snug">
+            {addon.shortDescription}
+          </span>
+        ) : null}
+      </div>
+      <div className="mt-2 flex min-h-[44px] flex-row items-center justify-between gap-3">
+        <img
+          className="h-11 w-max max-w-[70%] object-contain object-left"
+          src={selected ? addon.titleImageUrl : addon.titleImageUrlSelected}
+          alt=""
+        />
         {installState && <AddonBarItemStatus status={installState.status} />}
       </div>
     </div>
@@ -173,7 +186,7 @@ const AddonBarPublisherButton: FC<AddonBarPublisherButtonProps> = ({ button }) =
   } else {
     return (
       <button
-        className="flex w-full flex-row items-center justify-between rounded-md border-2 border-navy-light px-5 py-6 text-4xl transition duration-200 hover:border-cyan"
+        className="flex w-full flex-row items-center justify-between rounded-xl border-2 border-navy-light/90 px-5 py-6 text-4xl shadow-sm transition-all duration-300 ease-out-expo hover:-translate-y-0.5 hover:border-cyan hover:shadow-md hover:shadow-cyan/10 active:translate-y-0"
         disabled={button.inop}
         onClick={handleClick}
       >

@@ -122,12 +122,12 @@ export const PromptModal: FC<PromptModalProps> = ({
         <DoNotAskAgain checked={checkMark} toggleChecked={() => setCheckMark((old) => !old)} />
       )}
 
-      <div className="mt-8 flex flex-row gap-x-4">
-        <Button className="grow" onClick={handleCancel}>
+      <div className="mt-8 flex min-w-0 flex-col-reverse gap-3 sm:flex-row sm:gap-x-4">
+        <Button className="min-h-[2.35em] min-w-0 flex-1" onClick={handleCancel}>
           {cancelText ?? 'Cancel'}
         </Button>
         <Button
-          className="grow"
+          className="min-h-[2.35em] min-w-0 flex-1"
           type={confirmColor ?? ButtonType.Emphasis}
           disabled={!confirmEnabled}
           onClick={handleConfirm}
@@ -215,11 +215,14 @@ export const ChangelogModal: React.FC = () => {
   };
 
   return (
-    <div className="w-5/12 max-w-screen-sm rounded-xl border-2 border-navy-light bg-navy p-8 text-quasi-white">
+    <div className="w-5/12 max-w-screen-sm rounded-2xl border border-white/10 bg-navy p-8 text-quasi-white shadow-panel-deep ring-1 ring-cyan/15">
       <div className="flex w-full flex-row items-start justify-between">
         <h2 className="font-bold leading-none text-quasi-white">{'Changelog'}</h2>
-        <div className="" onClick={handleClose}>
-          <X className="-m-14.06px text-red-600 hover:text-red-500" size={50} strokeWidth={1} />
+        <div
+          className="cursor-pointer transition-transform duration-200 hover:scale-110 active:scale-95"
+          onClick={handleClose}
+        >
+          <X className="-m-14.06px text-red-500 hover:text-red-400" size={50} strokeWidth={1} />
         </div>
       </div>
       <div className="mt-4 h-96 overflow-y-scroll">
@@ -294,10 +297,26 @@ export const ModalContainer: FC = () => {
 
   return (
     <div
-      className={`fixed inset-0 z-50 transition duration-200 ${modal ? 'opacity-100' : 'pointer-events-none opacity-0'}`}
+      className={`fixed inset-0 z-50 transition-all duration-300 ease-out-expo ${
+        modal ? 'opacity-100' : 'pointer-events-none opacity-0'
+      }`}
     >
-      <div className="absolute inset-0 bg-navy-dark opacity-75" />
-      <div className="absolute inset-0 flex flex-col items-center justify-center">{modal}</div>
+      <div
+        className={`absolute inset-0 bg-navy-dark/80 backdrop-blur-md transition-opacity duration-300 ${
+          modal ? 'opacity-100' : 'opacity-0'
+        }`}
+      />
+      <div className="absolute inset-0 flex flex-col items-center justify-center p-5">
+        <div
+          className={`max-h-[92vh] w-full max-w-[min(100%,42rem)] overflow-y-auto motion-safe:transition-all motion-safe:duration-300 motion-safe:ease-out-expo ${
+            modal
+              ? 'motion-safe:animate-panel-in motion-safe:opacity-100'
+              : 'scale-95 opacity-0 motion-safe:animate-none'
+          }`}
+        >
+          {modal}
+        </div>
+      </div>
     </div>
   );
 };

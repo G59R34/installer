@@ -11,13 +11,16 @@ import { Button, ButtonType } from 'renderer/components/Button';
 import { PromptModal, useModals } from 'renderer/components/Modal';
 import { AutostartDialog } from 'renderer/components/Modal/AutostartDialog';
 import { useAddonExternalApps } from 'renderer/utils/ExternalAppsUI';
+import { InstallProgressPanel } from 'renderer/components/ui/InstallProgressPanel';
 
 export interface StateSectionProps {
   publisher: Publisher;
   addon: Addon;
+  /** Wired from the addon screen so Cancel sits in the install banner (active phases only). */
+  onCancelInstall?: () => void;
 }
 
-export const StateSection: FC<StateSectionProps> = ({ publisher, addon }) => {
+export const StateSection: FC<StateSectionProps> = ({ publisher, addon, onCancelInstall }) => {
   const installStates = useAppSelector((state) => state.installStatus);
   const downloads = useAppSelector((state) => state.downloads);
 
@@ -53,6 +56,7 @@ export const StateSection: FC<StateSectionProps> = ({ publisher, addon }) => {
         installState={dependencyAddonInstallState ?? addonInstallState}
         download={dependencyAddonDownload ?? addonDownload}
         isDependency={isInstallingDependency}
+        onCancelInstall={onCancelInstall}
       />
     </>
   );
@@ -61,6 +65,13 @@ export const StateSection: FC<StateSectionProps> = ({ publisher, addon }) => {
 const StateContainer: FC = ({ children }) => (
   <div className="bottom-0 left-0 flex h-32 w-full flex-row items-center justify-between bg-navy-dark/95 px-6 pb-5 pt-6">
     {children}
+  </div>
+);
+
+/** Full-width surface for the rich install panel (variable height; replaces the fixed compact bar). */
+const InstallBannerSurface: FC = ({ children }) => (
+  <div className="to-navy-dark/98 w-full border-t border-cyan/20 bg-gradient-to-b from-[rgba(10,22,42,0.97)] shadow-[0_-20px_56px_rgba(0,0,0,0.55)] backdrop-blur-md">
+    <div className="mx-auto flex w-full max-w-[1200px] flex-col px-5 pb-5 pt-6 sm:px-8">{children}</div>
   </div>
 );
 
@@ -76,7 +87,7 @@ interface ProgressBarProps {
 
 const ProgressBar: FC<ProgressBarProps> = ({ className, value }) => (
   <div className="z-10 h-2 w-full bg-black">
-    <div className={`z-11 h-2 transition-all duration-75 ${className}`} style={{ width: `${value}%` }} />
+    <div className={`z-11 h-2 transition-all duration-150 ease-out ${className}`} style={{ width: `${value}%` }} />
     {/* FIXME animation */}
   </div>
 );
@@ -170,9 +181,15 @@ interface DownloadProgressBannerProps {
   installState: InstallState;
   download: DownloadItem;
   isDependency: boolean;
+  onCancelInstall?: () => void;
 }
 
-const DownloadProgressBanner: FC<DownloadProgressBannerProps> = ({ addon, installState, download }) => {
+const DownloadProgressBanner: FC<DownloadProgressBannerProps> = ({
+  addon,
+  installState,
+  download,
+  onCancelInstall,
+}) => {
   if (!installState || !download) {
     return null;
   }
@@ -274,14 +291,13 @@ const DownloadProgressBanner: FC<DownloadProgressBannerProps> = ({ addon, instal
     InstallStatusCategories.installing.includes(installState.status) &&
     !InstallStatusCategories.installingNoProgress.includes(installState.status);
 
-  // let smallStateText;
-  // if (installState.status === InstallStatus.Downloading && download?.progress.interrupted) {
-  //     smallStateText = <SmallStateText>Waiting for network connection</SmallStateText>;
-  // } else if (isDependency) {
-  //     smallStateText = <SmallStateText>Installing dependency</SmallStateText>;
-  // } else {
-  //     smallStateText = <SmallStateText>Installing</SmallStateText>;
-  // }
+  const pctFinite = Number.isFinite(progressBarValue) ? Math.min(100, Math.max(0, progressBarValue)) : 0;
+
+  const useRichInstallPanel =
+    InstallStatusCategories.installing.includes(installState.status) &&
+    installState.status !== InstallStatus.DownloadError &&
+    installState.status !== InstallStatus.DownloadCanceled &&
+    installState.status !== InstallStatus.Unknown;
 
   let moduleStateText;
   if (
@@ -315,30 +331,43 @@ const DownloadProgressBanner: FC<DownloadProgressBannerProps> = ({ addon, instal
 
   return (
     <div className="grow" style={{ flexGrow: 10 }}>
-      <StateContainer>
-        <span className="flex items-center">
-          {stateIcon}
+      {useRichInstallPanel ? (
+        <InstallBannerSurface>
+          <InstallProgressPanel
+            download={download}
+            installState={installState}
+            progressPercent={pctFinite}
+            onCancel={onCancelInstall}
+          />
+        </InstallBannerSurface>
+      ) : (
+        <>
+          <StateContainer>
+            <span className="flex w-full items-center">
+              {stateIcon}
 
-          <div className="mr-6 h-20 w-0.5 bg-gray-700"></div>
+              <div className="mr-6 h-20 w-0.5 bg-gray-700"></div>
 
-          <div className="flex items-center gap-x-12">
-            <div className="flex flex-col gap-y-2">
-              {moduleStateText}
-              {stateText}
-            </div>
-          </div>
-        </span>
+              <div className="flex min-w-0 flex-1 items-center gap-x-12">
+                <div className="flex min-w-0 flex-col gap-y-2">
+                  {moduleStateText}
+                  {stateText}
+                </div>
+              </div>
 
-        {showProgress && (
-          <span className="flex items-center text-white">
-            <span className="font-semibold" style={{ fontSize: '38px' }}>
-              {progressBarValue}%
+              {showProgress && (
+                <span className="ml-auto flex shrink-0 items-center text-white">
+                  <span className="font-semibold tabular-nums" style={{ fontSize: '38px' }}>
+                    {pctFinite}%
+                  </span>
+                </span>
+              )}
             </span>
-          </span>
-        )}
-      </StateContainer>
+          </StateContainer>
 
-      <ProgressBar className={progressBarBg} value={progressBarValue} />
+          <ProgressBar className={progressBarBg} value={pctFinite} />
+        </>
+      )}
     </div>
   );
 };

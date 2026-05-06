@@ -1,4 +1,4 @@
-import React, { useState, FC } from 'react';
+import React, { useEffect, useState, FC } from 'react';
 import { NavLink } from 'react-router-dom';
 import store, { useIsDarkTheme, useSetting } from 'renderer/rendererSettings';
 import { Publisher } from 'renderer/utils/InstallerConfiguration';
@@ -17,8 +17,10 @@ export const NavBar: FC = ({ children }) => {
   const bg = darkTheme ? 'bg-navy-dark' : 'bg-navy';
 
   return (
-    <div className={`${bg} flex h-full flex-col justify-between border-r border-navy-light px-6 py-7`}>
-      <div className="mb-5 border-b-2 border-navy-light pb-5">
+    <div
+      className={`${bg} flex h-full flex-col justify-between border-r border-white/5 bg-gradient-to-b from-navy-dark/40 to-transparent px-6 py-7 shadow-[4px_0_24px_rgba(0,0,0,0.2)]`}
+    >
+      <div className="mb-5 border-b border-white/10 pb-5">
         <ManagedSimSelector to="/" className="border-none" handleClick={() => setManagedSim(nextSim(managedSim))}>
           {managedSim === Simulators.Msfs2020 && <img width={36} src={Msfs2020logo} alt={`MSFS 2020 Logo`} />}
           {managedSim === Simulators.Msfs2024 && <img width={36} src={Msfs2024logo} alt={`MSFS 2024 Logo`} />}
@@ -41,7 +43,7 @@ export const NavBar: FC = ({ children }) => {
 };
 
 const BASE_STYLE =
-  'w-20 h-20 flex flex-col justify-center items-center rounded-md bg-transparent hover:bg-navy-light transition duration-200 border-2 border-navy-light';
+  'relative w-20 h-20 flex flex-col justify-center items-center overflow-hidden rounded-xl border-2 border-navy-light/80 bg-navy-light/5 transition-all duration-300 ease-out-expo hover:-translate-y-0.5 hover:border-cyan/50 hover:bg-navy-light/80 hover:shadow-nav-active active:translate-y-0 active:scale-95';
 
 export interface NavBarItemProps {
   to: string;
@@ -58,7 +60,11 @@ export const NavbarItem: FC<NavBarItemProps> = ({
   className,
   children,
 }) => (
-  <NavLink to={to} className={`${BASE_STYLE} ${className}`} activeClassName={`${BASE_STYLE} bg-navy-light`}>
+  <NavLink
+    to={to}
+    className={`${BASE_STYLE} ${className}`}
+    activeClassName={`${BASE_STYLE} border-cyan/60 bg-navy-light bg-gradient-to-br from-navy-light to-navy-lightest/90 shadow-glow-cyan ring-1 ring-cyan/30`}
+  >
     {children}
 
     <span className="absolute size-0" style={{ visibility: showNotification ? 'visible' : 'hidden' }}>
@@ -78,15 +84,24 @@ export const ManagedSimSelector: FC<NavBarItemProps> = ({
   handleClick,
 }) => {
   const [simCount, setSimCount] = useState(Object.values(enabledSimulators()).length);
-  store.onDidChange('mainSettings', () => {
-    setSimCount(Object.values(enabledSimulators()).length);
-  });
+
+  useEffect(() => {
+    const unsubscribe = store.onDidChange('mainSettings', () => {
+      setSimCount(Object.values(enabledSimulators()).length);
+    });
+    return () => {
+      unsubscribe();
+    };
+  }, []);
 
   return (
     <NavLink
       to={to}
       className={cn(BASE_STYLE, className, 'group')}
-      activeClassName={cn(BASE_STYLE, 'bg-navy-light')}
+      activeClassName={cn(
+        BASE_STYLE,
+        'border-cyan/60 bg-navy-light bg-gradient-to-br from-navy-light to-navy-lightest/90 shadow-glow-cyan ring-1 ring-cyan/30',
+      )}
       onClick={handleClick}
     >
       {children}

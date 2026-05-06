@@ -4,6 +4,7 @@ import { PromptModal } from 'renderer/components/Modal/index';
 import { Download, Hdd, HddFill } from 'react-bootstrap-icons';
 import { ButtonType } from 'renderer/components/Button';
 import { FreeDiskSpaceInfo } from 'renderer/utils/FreeDiskSpace';
+import cn from 'renderer/utils/cn';
 
 const GIB = 1_074_000_000;
 const MIB = 1_049_000;
@@ -19,6 +20,33 @@ function formatSize(size: number): string {
     return `${numMegabytes.toFixed(1)} MiB`;
   }
 }
+
+const StatRow: FC<{
+  icon: React.ReactNode;
+  label: string;
+  value: string;
+  /** Slightly larger primary figure (e.g. download size). */
+  emphasizeValue?: boolean;
+  valueClassName?: string;
+}> = ({ icon, label, value, emphasizeValue, valueClassName }) => (
+  <div className="flex min-w-0 flex-col gap-2 rounded-sm sm:flex-row sm:items-center sm:justify-between sm:gap-x-4">
+    <div className="flex min-w-0 flex-1 items-start gap-x-3 sm:items-center sm:gap-x-5">
+      {icon}
+      <span className="min-w-0 flex-1 font-manrope text-xl leading-snug text-quasi-white sm:text-2xl lg:text-3xl">
+        {label}
+      </span>
+    </div>
+    <span
+      className={cn(
+        'shrink-0 self-start font-manrope font-bold tabular-nums sm:self-auto',
+        emphasizeValue ? 'text-4xl sm:text-5xl' : 'text-3xl sm:text-4xl',
+        valueClassName ?? 'text-quasi-white',
+      )}
+    >
+      {value}
+    </span>
+  </div>
+);
 
 export interface InstallSizeDialogProps {
   updateInfo: UpdateInfo;
@@ -51,69 +79,48 @@ export const InstallSizeDialog: FC<InstallSizeDialogProps> = ({
     <PromptModal
       title={'Package size'}
       bodyText={
-        <div className="mt-5 flex flex-col gap-y-8">
-          <div className="flex flex-col rounded-sm">
-            <span className="flex items-center justify-between">
-              <span className="flex items-center gap-x-6">
-                <Download size={30} />
-
-                <span className="text-3xl">Download size</span>
-              </span>
-
-              <span className="font-manrope text-5xl font-bold">{formatSize(updateInfo.downloadSize)}</span>
-            </span>
-          </div>
+        <div className="mt-5 flex min-w-0 flex-col gap-y-6 sm:gap-y-8">
+          <StatRow
+            emphasizeValue
+            icon={<Download size={28} className="shrink-0 sm:size-[30px]" />}
+            label="Download size"
+            value={formatSize(updateInfo.downloadSize)}
+          />
 
           <hr className="m-0" />
 
-          <div className="flex flex-col rounded-sm">
-            <span className="flex items-center justify-between gap-x-5">
-              <span className="flex items-center gap-x-6">
-                <HddFill size={30} />
+          <StatRow
+            icon={<HddFill size={28} className="shrink-0 sm:size-[30px]" />}
+            label="Required disk space"
+            value={formatSize(requiredDiskSpace)}
+          />
 
-                <span className="text-3xl">Required disk space</span>
-              </span>
-
-              <span className="font-manrope text-4xl font-bold">{formatSize(requiredDiskSpace)}</span>
-            </span>
-          </div>
-
-          <div className="flex flex-col rounded-sm">
-            <span className="flex items-center justify-between gap-x-5">
-              <span className="flex items-center gap-x-6">
-                <Hdd size={30} />
-
-                <span className="text-3xl">Available disk space (destination)</span>
-              </span>
-
-              <span className={`font-manrope text-4xl font-bold ${availableDiskSpaceColorDest}`}>
-                {formatSize(freeDeskSpaceInfo.freeSpaceInDest)}
-              </span>
-            </span>
+          <div className="flex min-w-0 flex-col gap-y-5">
+            <StatRow
+              icon={<Hdd size={28} className="shrink-0 sm:size-[30px]" />}
+              label="Available disk space (destination)"
+              value={formatSize(freeDeskSpaceInfo.freeSpaceInDest)}
+              valueClassName={availableDiskSpaceColorDest}
+            />
 
             {showTemporaryAsSeparate && (
-              <span className="flex items-center justify-between gap-x-5">
-                <span className="flex items-center gap-x-6">
-                  <Hdd size={30} />
-
-                  <span className="text-3xl">Available disk space (temporary)</span>
-                </span>
-
-                <span className={`font-manrope text-4xl font-bold ${availableDiskSpaceColorTemp}`}>
-                  {formatSize(freeDeskSpaceInfo.freeSpaceInTemp)}
-                </span>
-              </span>
+              <StatRow
+                icon={<Hdd size={28} className="shrink-0 sm:size-[30px]" />}
+                label="Available disk space (temporary)"
+                value={formatSize(freeDeskSpaceInfo.freeSpaceInTemp)}
+                valueClassName={availableDiskSpaceColorTemp}
+              />
             )}
           </div>
 
           {!canInstall && (
-            <div className="flex w-full items-center gap-x-7 rounded-md border-2 border-utility-red px-7 py-3.5 text-utility-red">
-              <Hdd className="text-utility-red" size={36} />
+            <div className="flex w-full min-w-0 flex-col gap-4 rounded-md border-2 border-utility-red px-5 py-4 text-utility-red sm:flex-row sm:items-start sm:gap-x-6 sm:px-7 sm:py-3.5">
+              <Hdd className="shrink-0 text-utility-red" size={36} />
 
-              <div className="flex flex-col gap-y-2.5">
-                <span className="font-manrope text-4xl font-bold">Not enough available disk space</span>
+              <div className="flex min-w-0 flex-col gap-y-2">
+                <span className="font-manrope text-2xl font-bold sm:text-4xl">Not enough available disk space</span>
 
-                <span className="text-2xl">Try to free up space in order to install this addon.</span>
+                <span className="text-lg sm:text-2xl">Try to free up space in order to install this addon.</span>
               </div>
             </div>
           )}

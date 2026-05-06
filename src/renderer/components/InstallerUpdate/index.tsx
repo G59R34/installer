@@ -69,9 +69,9 @@ export const InstallerUpdate = (): JSX.Element => {
 
   return (
     <div
-      className={`z-50 flex h-full cursor-pointer items-center justify-center place-self-start bg-yellow-500 px-4 transition duration-200 hover:bg-yellow-600 ${
+      className={`z-50 flex h-full cursor-pointer items-center justify-center place-self-start rounded-l-xl bg-gradient-to-r from-amber-500 to-yellow-500 px-5 shadow-lg ring-1 ring-amber-300/35 transition-all duration-300 ease-out-expo hover:from-amber-400 hover:to-yellow-400 hover:shadow-xl hover:ring-amber-200/50 active:scale-[0.98] ${
         updateNeeded ? 'visible' : 'hidden'
-      }`}
+      } ${updateState === UpdateState.RestartToUpdate ? 'motion-safe:animate-attention-pulse' : ''}`}
       onClick={() => {
         if (updateState === UpdateState.RestartToUpdate) {
           ipcRenderer.send('restartAndUpdate');

@@ -1,13 +1,23 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import { InstallerStore } from 'renderer/redux/store';
-import { Check, ChevronDown } from 'tabler-icons-react';
+import { Check2, ChevronDown } from 'react-bootstrap-icons';
 import { Addon, AddonTrack } from 'renderer/utils/InstallerConfiguration';
 import cn from 'renderer/utils/cn';
+import { showAddonTrackTextureRow, splitTrackTitle } from 'renderer/components/ui/trackDisplay';
 import '../index.css';
 
+const transitionCard =
+  'transition-[transform,box-shadow,border-color,background-color] duration-150 ease-out motion-reduce:transition-none';
+
+const SkeletonLine = () => (
+  <span className="mt-0.5 inline-block h-5 w-32 animate-pulse rounded bg-navy-light/80 motion-reduce:animate-none" />
+);
+
 export const Tracks: React.FC = ({ children }) => (
-  <div className="flex flex-row items-stretch justify-start gap-3">{children}</div>
+  <div className="grid w-full grid-cols-1 items-stretch gap-5 sm:grid-cols-2 sm:gap-6 xl:grid-cols-[repeat(auto-fit,minmax(260px,1fr))] xl:gap-8">
+    {children}
+  </div>
 );
 
 type TrackProps = {
@@ -23,22 +33,67 @@ export const Track: React.FC<TrackProps> = ({ isSelected, isInstalled, handleSel
     (state) => state.latestVersionNames[addon.key]?.[track.key]?.name,
   );
 
+  const { channel, texture } = splitTrackTitle(track.name);
+  const showTextureRow = showAddonTrackTextureRow(addon.key);
+
   return (
-    <div
+    <button
+      type="button"
       className={cn(
-        'flex w-60 h-24 cursor-pointer flex-col rounded-sm-md border-2 border-transparent bg-navy-dark text-white transition-all duration-200 hover:border-navy-lightest hover:text-gray-300',
-        isSelected && 'border-2 border-cyan text-cyan',
+        'group relative flex min-h-[100px] w-full min-w-0 max-w-none flex-col rounded-xl border-2 bg-navy-dark p-4 text-left sm:min-h-[110px] sm:p-[18px] xl:min-h-[128px] xl:rounded-2xl xl:p-5 2xl:min-h-[140px] 2xl:p-6 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan focus-visible:ring-offset-2 focus-visible:ring-offset-navy-dark disabled:cursor-not-allowed',
+        transitionCard,
+        'hover:-translate-y-px hover:border-cyan/40 hover:shadow-[0_0_22px_-6px_rgba(0,224,254,0.38)]',
+        isSelected &&
+          'border-cyan bg-navy-light/30 shadow-[inset_0_1px_24px_-12px_rgba(0,224,254,0.45)] ring-1 ring-cyan/35',
+        !isSelected && 'border-navy-light/70 text-white',
       )}
       onClick={() => handleSelected(track)}
     >
-      <div className="flex flex-col px-3 py-2.5">
-        <span className="text-xl text-current">{track.name}</span>
-        <span className="mt-0.5 flex justify-between font-manrope text-3xl font-medium tracking-wider text-current">
-          {latestVersionName ?? <span className="mt-1.5 block h-7 w-32 animate-pulse bg-navy-light"></span>}
-          {isInstalled && <Check className={`-mt-3.5 stroke-current text-cyan`} strokeWidth={3} />}
+      <div className="flex items-start justify-between gap-2">
+        <span className="min-w-0 flex-1 font-manrope text-fbw-base font-semibold leading-snug text-quasi-white sm:text-fbw-md xl:text-fbw-lg 2xl:text-fbw-xl">
+          {channel}
         </span>
+        {isSelected && (
+          <span
+            className="flex size-9 shrink-0 items-center justify-center rounded-full border border-cyan/50 bg-cyan/15 text-cyan xl:size-10 2xl:size-11"
+            aria-label="Selected release track"
+          >
+            <Check2 className="size-[18px] xl:size-5" strokeWidth={2.5} />
+          </span>
+        )}
       </div>
-    </div>
+
+      <dl className="mt-3 space-y-1.5 font-manrope xl:mt-4 xl:space-y-2">
+        {showTextureRow && (
+          <div className="flex items-start justify-between gap-3">
+            <dt className="shrink-0 text-fbw-xs text-quasi-white/55 sm:text-fbw-sm">Texture</dt>
+            <dd className="min-w-0 flex-1 break-words text-right font-manrope text-fbw-sm font-medium text-quasi-white/90 sm:text-fbw-base xl:text-fbw-md">
+              {texture ?? '—'}
+            </dd>
+          </div>
+        )}
+        <div className="flex items-start justify-between gap-3">
+          <dt className="shrink-0 text-fbw-xs text-quasi-white/55 sm:text-fbw-sm">Build</dt>
+          <dd className="min-w-0 flex-1 break-all text-right font-mono text-fbw-md font-bold leading-snug text-cyan/95 sm:text-fbw-lg xl:text-[17px]">
+            {latestVersionName ?? <SkeletonLine />}
+          </dd>
+        </div>
+      </dl>
+
+      {isInstalled && (
+        <span
+          className={cn(
+            'mt-auto inline-flex max-w-full pt-2.5 font-manrope text-fbw-xs font-semibold uppercase tracking-wide',
+            isSelected ? 'text-utility-green' : 'text-quasi-white/55',
+          )}
+          aria-label={isInstalled ? 'Installed on this machine' : undefined}
+        >
+          <span className="rounded-full border border-white/15 bg-navy/60 px-2 py-0.5 text-quasi-white/85">
+            On disk
+          </span>
+        </span>
+      )}
+    </button>
   );
 };
 
@@ -65,6 +120,11 @@ export const QATrackSelector: React.FC<QATrackSelectorProps> = ({
     (state) => state.latestVersionNames[addon.key]?.[selectedQATrack?.key]?.name,
   );
 
+  const { channel: qaChannel, texture: qaTexture } = selectedQATrack
+    ? splitTrackTitle(selectedQATrack.name)
+    : { channel: '', texture: undefined };
+  const showTextureRow = showAddonTrackTextureRow(addon.key);
+
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
@@ -82,36 +142,58 @@ export const QATrackSelector: React.FC<QATrackSelectorProps> = ({
   };
 
   return (
-    <div className="relative w-max min-w-[400px] max-w-[650px]" ref={dropdownRef}>
-      <div
+    <div className="relative w-full min-w-0" ref={dropdownRef}>
+      <button
+        type="button"
         className={cn(
-          'flex w-full h-24 cursor-pointer items-center justify-between rounded-sm-md border-2 border-transparent bg-navy-dark text-white transition-all duration-200 hover:border-navy-lightest hover:text-gray-300 px-4',
-          selectedQATrack && 'border-2 border-cyan text-cyan',
+          'flex min-h-[104px] w-full flex-row items-stretch justify-between rounded-xl border-2 bg-navy-dark px-4 py-4 text-left text-white transition-all duration-150 ease-out sm:min-h-[112px] sm:px-5 sm:py-5 xl:min-h-[120px] xl:rounded-2xl xl:px-6 xl:py-6 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan focus-visible:ring-offset-2 focus-visible:ring-offset-navy-dark',
+          'hover:-translate-y-px hover:border-cyan/35 hover:shadow-[0_0_22px_-6px_rgba(0,224,254,0.35)]',
+          selectedQATrack ? 'border-cyan ring-1 ring-cyan/30' : 'border-navy-light/70',
         )}
+        aria-expanded={isOpen}
         onClick={() => setIsOpen(!isOpen)}
       >
-        <div className="flex min-w-0 flex-col px-3 py-2.5">
-          <span className="truncate text-xl text-current">
-            {selectedQATrack ? selectedQATrack.name : 'Select QA Build'}
+        <div className="flex min-w-0 flex-col justify-center gap-2">
+          <span className="truncate font-manrope text-fbw-base font-semibold text-quasi-white">
+            {selectedQATrack ? qaChannel : 'Select QA Build'}
           </span>
           {selectedQATrack && (
-            <span className="mt-0.5 flex justify-between font-manrope text-3xl font-medium tracking-wider text-current">
-              {latestVersionName ?? <span className="mt-1.5 block h-7 w-32 animate-pulse bg-navy-light"></span>}
-            </span>
+            <>
+              {showTextureRow && (
+                <div className="flex items-start justify-between gap-4 font-manrope text-fbw-sm">
+                  <span className="shrink-0 text-quasi-white/55">Texture</span>
+                  <span className="min-w-0 flex-1 break-words text-right font-medium text-quasi-white">{qaTexture ?? '—'}</span>
+                </div>
+              )}
+              <div className="flex items-start justify-between gap-4 font-manrope text-fbw-sm">
+                <span className="shrink-0 text-quasi-white/55">Build</span>
+                <span className="min-w-0 flex-1 break-all text-right font-mono text-fbw-md font-bold leading-snug text-cyan">
+                  {latestVersionName ?? <SkeletonLine />}
+                </span>
+              </div>
+            </>
           )}
         </div>
 
-        <div className="flex min-w-24 items-center justify-end gap-2">
-          {installedTrack === selectedQATrack && <Check className="stroke-current text-cyan" strokeWidth={3} />}
+        <div className="flex min-w-[5.5rem] flex-col items-end justify-between gap-2">
+          {installedTrack?.key === selectedQATrack?.key && (
+            <span className="border-utility-green/35 bg-utility-green/10 rounded-full border px-2 py-0.5 font-manrope text-fbw-xs font-semibold uppercase tracking-wide text-utility-green">
+              On disk
+            </span>
+          )}
           <ChevronDown
-            className={cn('stroke-current transition-transform duration-200 text-white', isOpen && 'rotate-180')}
+            className={cn('stroke-current text-quasi-white transition-transform duration-150', isOpen && 'rotate-180')}
             strokeWidth={2}
+            aria-hidden
           />
         </div>
-      </div>
+      </button>
 
       {isOpen && (
-        <div className="absolute inset-x-0 top-full z-10 mt-2 max-h-72 overflow-y-auto rounded-sm-md border border-navy-lightest bg-navy-dark shadow-lg">
+        <div
+          className="absolute inset-x-0 top-[calc(100%+6px)] z-10 max-h-72 overflow-y-auto rounded-xl border border-white/10 bg-navy-dark py-1 shadow-panel-deep ring-1 ring-black/40"
+          role="listbox"
+        >
           {tracks
             .slice()
             .sort((a, b) => b.key.localeCompare(a.key, undefined, { numeric: true }))
@@ -150,22 +232,45 @@ const QATrackDropdownItem: React.FC<QATrackDropdownItemProps> = ({
     (state) => state.latestVersionNames[addon.key]?.[track.key]?.name,
   );
 
+  const { channel, texture } = splitTrackTitle(track.name);
+  const showTextureRow = showAddonTrackTextureRow(addon.key);
+
   return (
-    <div
+    <button
+      type="button"
       className={cn(
-        'flex items-center justify-between px-4 py-3 cursor-pointer text-white hover:bg-navy-light transition-colors duration-150',
-        isSelected && 'text-cyan',
+        'flex w-full items-start justify-between gap-4 px-4 py-3 text-left transition-colors duration-150 focus-visible:bg-navy-light/60 focus-visible:outline-none',
+        isSelected ? 'bg-navy-light/35 text-cyan' : 'text-white hover:bg-navy-light/45',
       )}
+      role="option"
+      aria-selected={isSelected}
       onClick={onSelect}
     >
-      <div className="flex min-w-0 flex-col">
-        <span className="truncate text-nowrap text-lg text-current">{track.name}</span>
-        <span className={cn('font-manrope text-sm text-white', isSelected && 'text-cyan')}>
-          {latestVersionName ?? 'Loading...'}
+      <div className="flex min-w-0 flex-col gap-1">
+        <span className="truncate font-manrope text-fbw-base font-semibold">{channel}</span>
+        {showTextureRow && (
+          <span className="font-manrope text-fbw-sm text-quasi-white/55">
+            Texture: <span className="text-quasi-white/85">{texture ?? '—'}</span>
+          </span>
+        )}
+        <span
+          className={cn(
+            'break-all font-mono text-fbw-md font-bold leading-snug',
+            isSelected ? 'text-cyan/95' : 'text-quasi-white/75',
+          )}
+        >
+          {latestVersionName ?? '…'}
         </span>
       </div>
 
-      {isInstalled && <Check className="stroke-current text-cyan" strokeWidth={3} />}
-    </div>
+      <div className="flex shrink-0 flex-col items-end gap-2">
+        {isSelected && <Check2 className="size-5 text-cyan" strokeWidth={2.5} aria-label="Selected" />}
+        {isInstalled && (
+          <span className="rounded-full border border-white/15 px-2 py-0.5 font-manrope text-fbw-xs uppercase tracking-wide text-quasi-white/70">
+            On disk
+          </span>
+        )}
+      </div>
+    </button>
   );
 };
